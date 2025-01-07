@@ -7,6 +7,8 @@ const loading = ref(false);
 const editDialog = ref(false);
 const deleteDialog = ref(false);
 const tasks = ref<Task[]>([]);
+const searchQuery = ref("");
+const search = ref("");
 
 const defaultItem = ref<Task>({
   id: -1,
@@ -23,6 +25,7 @@ const editedIndex = ref(-1);
 // Fetch initial data
 const fetchTasks = async () => {
   loading.value = true;
+
   try {
     tasks.value = await taskApi.getAllTasks();
   } catch (error) {
@@ -36,6 +39,12 @@ const fetchTasks = async () => {
 const editItem = (item: Task) => {
   editedIndex.value = tasks.value.indexOf(item);
   editedItem.value = { ...item };
+  editDialog.value = true;
+};
+
+const addItem = () => {
+  editedIndex.value = -1;
+  editedItem.value = { ...defaultItem.value };
   editDialog.value = true;
 };
 
@@ -133,7 +142,40 @@ const formatDate = (date: string) => {
 <template>
   <VCard title="Lista de Tarefas">
     <VCardText>
-      <VDataTable :headers="headers" :items="tasks" :items-per-page="5">
+      <div class="d-flex flex-wrap gap-4 ma-6">
+        <div class="d-flex align-center">
+          <AppTextField
+            prepend-inner-icon="tabler-search"
+            v-model="search"
+            placeholder="Pesquisar"
+            style="inline-size: 300px"
+            class="me-3"
+          />
+        </div>
+
+        <VSpacer />
+        <div class="d-flex gap-4 flex-wrap align-center">
+          <VBtn color="primary" prepend-icon="tabler-plus" @click="addItem()">
+            Adicionar Tarefa
+          </VBtn>
+          <VBtn
+            color="secondary"
+            prepend-icon="tabler-refresh"
+            @click="fetchTasks"
+          >
+            Atualizar
+          </VBtn>
+        </div>
+      </div>
+
+      <VDataTable
+        :headers="headers"
+        :items="tasks"
+        :search="search"
+        :items-per-page="5"
+        :loading="loading"
+        :sort-by="[{ key: 'id', order: 'desc' }]"
+      >
         <!-- Status -->
         <template #item.status="{ item }">
           <VChip :color="resolveStatusVariant(item.status).color" size="small">
