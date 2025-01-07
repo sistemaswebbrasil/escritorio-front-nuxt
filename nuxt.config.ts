@@ -61,7 +61,7 @@ export default defineNuxtConfig({
     typedPages: true,
   },
 
-  typescript: {
+  typescript: {    
     tsConfig: {
       compilerOptions: {
         paths: {
