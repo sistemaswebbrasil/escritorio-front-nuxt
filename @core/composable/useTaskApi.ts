@@ -4,6 +4,7 @@ export const useTaskApi = () => {
   const config = useRuntimeConfig()  
 
   const getAllTasks = async (): Promise<Task[]> => {
+    // const response = await fetch(`https://adria4889.c44.integrator.host/integrator-api/api/tasks`)
     const response = await fetch(`/api/tasks`)
     return response.json()
   }
