@@ -137,6 +137,10 @@ const resolveStatusVariant = (status: string) => {
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString();
 };
+
+definePageMeta({
+  middleware: "auth",
+});
 </script>
 
 <template>
