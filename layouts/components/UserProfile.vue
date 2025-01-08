@@ -1,10 +1,22 @@
 <script setup lang="ts">
 import { useRuntimeConfig } from "#app";
+import { useUserStore } from "@/@core/stores/userStore";
 import { useAuth0 } from "@auth0/auth0-vue";
 import avatar1 from "@images/avatars/avatar-1.png";
 
+const userStore = useUserStore();
+
 const auth0 = useAuth0();
+
 const config = useRuntimeConfig();
+
+const handleLogout = () => {
+  const token = useCookie("token");
+  token.value = null;
+  const userData = useCookie("userData");
+  userData.value = null;
+  auth0.logout();
+};
 </script>
 
 <template>
@@ -17,7 +29,7 @@ const config = useRuntimeConfig();
     color="success"
   >
     <VAvatar class="cursor-pointer" color="primary" variant="tonal">
-      <VImg :src="avatar1" />
+      <VImg :src="userStore.user?.picture ?? avatar1" />
 
       <!-- SECTION Menu -->
       <VMenu activator="parent" width="230" location="bottom end" offset="14px">
@@ -34,14 +46,14 @@ const config = useRuntimeConfig();
                   color="success"
                 >
                   <VAvatar color="primary" variant="tonal">
-                    <VImg :src="avatar1" />
+                    <VImg :src="userStore.user?.picture ?? avatar1" />
                   </VAvatar>
                 </VBadge>
               </VListItemAction>
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              John Doe
+              {{ userStore.user?.name }}
             </VListItemTitle>
             <VListItemSubtitle>Admin</VListItemSubtitle>
           </VListItem>
@@ -88,20 +100,12 @@ const config = useRuntimeConfig();
           <VDivider class="my-2" />
 
           <!-- 👉 Logout -->
-          <VListItem
-            @click="
-              auth0.logout({
-                logoutParams: {
-                  returnTo: config.public.AUTH0_REDIRECT_LOCAL_URI,
-                },
-              })
-            "
-          >
+          <VListItem @click="handleLogout">
             <template #prepend>
               <VIcon class="me-2" icon="tabler-logout" size="22" />
             </template>
 
-            <VListItemTitle>Logout???</VListItemTitle>
+            <VListItemTitle>Logout</VListItemTitle>
           </VListItem>
         </VList>
       </VMenu>

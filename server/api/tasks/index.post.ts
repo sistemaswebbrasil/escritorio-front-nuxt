@@ -1,20 +1,24 @@
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig()
-  const baseURL = config.public.NUXT_PUBLIC_API_BASE_URL
-  const body = await readBody(event)
+  const config = useRuntimeConfig();
+  const baseURL = config.public.NUXT_PUBLIC_API_BASE_URL;
+  const body = await readBody(event);
+  const token = getCookie(event, "token");
 
   try {
     const response = await fetch(`${baseURL}/api/tasks`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(body),
-    })
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
-    return await response.json()
+    });
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    return await response.json();
   } catch (error) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to create task',
-    })
+      statusMessage: "Failed to create task",
+    });
   }
-})
+});

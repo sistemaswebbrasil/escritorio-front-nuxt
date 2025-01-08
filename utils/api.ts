@@ -1,16 +1,14 @@
 export const $api = $fetch.create({
-
   // Request interceptor
   async onRequest({ options }) {
     // Set baseUrl for all API calls
-    options.baseURL = useRuntimeConfig().public.apiBaseUrl || '/api'
+    const apiBaseUrl = useRuntimeConfig().public.apiBaseUrl as string;
+    options.baseURL = apiBaseUrl || "/api";
 
-    const accessToken = useCookie('accessToken').value
+    const accessToken = useCookie("token").value;
     if (accessToken) {
-      options.headers = {
-        ...options.headers,
-        Authorization: `Bearer ${accessToken}`,
-      }
+      options.headers = new Headers(options.headers);
+      options.headers.set("Authorization", `Bearer ${accessToken}`);
     }
   },
-})
+});

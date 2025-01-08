@@ -17,6 +17,7 @@ definePageMeta({
       <VCardText v-if="auth0">
         Token: {{ auth0.idTokenClaims.value?.__raw }}
       </VCardText>
+      <VCardText v-if="auth0"> Token2: {{ auth0 }} </VCardText>
     </VCard>
 
     <VCard title="Want to integrate JWT? 🔒">
